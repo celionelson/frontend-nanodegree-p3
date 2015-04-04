@@ -10,24 +10,13 @@ var getRandomInt = function(min, max) {
 // Takes a relative position on the game's grid
 // Returns x and y position 
 // For example: setPosition(1,1) will return the position the enemy or the player 
-// should have to be in the first square of the grid (left upper corner) 
+// should have to be on the first square of the grid (left upper corner) 
 var setPosition = function(xGrid, yGrid) {
 
     var x = (xGrid - 1) * squareWidth;
     var y = (yGrid - 2) * squareHeight + 60;
 
     return {'x': x, 'y': y};
-
-}
-
-// Takes x and y position 
-// Returns relative position on the game's grid
-var getPosition = function(x, y) {
-
-    var xGrid = x / squareWidth + 1;
-    var yGrid = (y - 60) / squareHeight + 2;
-
-    return {'xGrid': xGrid, 'yGrid': yGrid};
 
 }
 
@@ -40,12 +29,11 @@ var Enemy = function() {
 
     // Determine initial position
     // Row position randomly chose between 3 stone paths
-    var pos = setPosition(-1, getRandomInt(2, 5));
-    this.x = pos['x'];
-    this.y = pos['y'];
+    this.x = -1;
+    this.y = getRandomInt(2, 5);
 
     // Randomly determine speed factor between 1 and 3
-    this.speed = squareWidth * getRandomInt(1, 4);
+    this.speed = getRandomInt(1, 4);
 
 }
 
@@ -60,7 +48,8 @@ Enemy.prototype.update = function(dt) {
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    var pos = setPosition(this.x, this.y);
+    ctx.drawImage(Resources.get(this.sprite), pos['x'], pos['y']);
 }
 
 // Now write your own player class
@@ -68,11 +57,9 @@ Enemy.prototype.render = function() {
 // a handleInput() method.
 var Player = function() {
     this.sprite = 'images/char-boy.png';
-
-    var pos = setPosition(3, 6);
     
-    this.x = pos['x'];
-    this.y = pos['y'];
+    this.x = 3;
+    this.y = 6;
 }
 
 Player.prototype.update = function(dt) {
@@ -80,27 +67,28 @@ Player.prototype.update = function(dt) {
 }
 
 Player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    var pos = setPosition(this.x, this.y);
+    ctx.drawImage(Resources.get(this.sprite), pos['x'], pos['y']);
 }
 
 Player.prototype.handleInput = function(key) {
     
     var pos = getPosition(this.x, this.y);
 
-    if (key === 'left' && pos['xGrid'] > 1) {
-        this.x -= squareWidth;
+    if (key === 'left' && this.x > 1) {
+        this.x -= 1;
     }
     
-    else if (key === 'up' && pos['yGrid'] > 2) {
-        this.y -= squareHeight;
+    else if (key === 'up' && this.y > 2) {
+        this.y -= 1;
     }
     
-    else if (key === 'right' && pos['xGrid'] < 5) {
-        this.x += squareWidth;
+    else if (key === 'right' && this.x < 5) {
+        this.x += 1;
     }
 
-    else if (key === 'down' && pos['yGrid'] < 6) {
-        this.y += squareHeight;
+    else if (key === 'down' && this.y < 6) {
+        this.y += 1;
     }
 }
 
