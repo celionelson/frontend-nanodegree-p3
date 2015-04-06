@@ -7,7 +7,7 @@ var squareHeight = 83,
 // Returns a random integer between min (included) and max (excluded)
 var getRandomInt = function(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
-}
+};
 
 // Takes a relative position on the game's grid
 // Returns x and y position 
@@ -18,13 +18,13 @@ var setPosition = function(xGrid, yGrid) {
     var y = (yGrid - 2) * squareHeight + 60;
 
     return {'x': x, 'y': y};
-}
+};
 
 // Enemies our player must avoid
 var Enemy = function() {
     // Initialize enemy
     this.init();
-}
+};
 
 // Initialize enemy position, direction and speed
 Enemy.prototype.init = function() {
@@ -82,7 +82,7 @@ Enemy.prototype.render = function() {
 var Player = function() {
     // Initialize player
     this.init();
-}
+};
 
 // Initialize player image and position
 Player.prototype.init = function() {
