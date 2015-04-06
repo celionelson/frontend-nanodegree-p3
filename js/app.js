@@ -22,12 +22,12 @@ var setPosition = function(xGrid, yGrid) {
 
 // Enemies our player must avoid
 var Enemy = function() {
-    // Initialize enemy
-    this.init();
+    // Reset enemy
+    this.reset();
 };
 
-// Initialize enemy position, direction and speed
-Enemy.prototype.init = function() {
+// Reset enemy position, direction and speed
+Enemy.prototype.reset = function() {
     // Randomly determine if enemy will walk reverse way
     // (from right to left)
     this.reverseWay = [true, false][Math.round(Math.random())];
@@ -58,9 +58,9 @@ Enemy.prototype.init = function() {
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-    // Re-initialize enemy when gets out of the screen
+    // Reset enemy when gets out of the screen
     if (this.x > (gridWidth + 1) || this.x < -1) {
-        this.init();
+        this.reset();
     }
     // Direction set reverse way for reverseWay enemies
     else if (this.reverseWay) {
@@ -80,26 +80,47 @@ Enemy.prototype.render = function() {
 
 // Player the user will play
 var Player = function() {
-    // Initialize player
-    this.init();
+    // Reset player
+    this.reset();
 };
 
-// Initialize player image and position
-Player.prototype.init = function() {
+// Reset player image, position and number of lives
+Player.prototype.reset = function() {
     this.sprite = 'images/char-boy.png';
     
     // Positioned at the center-bottom of the screen
     this.x = Math.ceil(gridWidth / 2);
-    this.y = gridHeight;    
+    this.y = gridHeight; 
+
+    // Initialize number of lives
+    this.livesNumber = 4;
+}
+
+// Collision handling
+Player.prototype.collision = function() {
+    // Positioned at the center-bottom of the screen
+    this.x = Math.ceil(gridWidth / 2);
+    this.y = gridHeight; 
+
+    // Reduce number of lives
+    this.livesNumber -= 1;
 }
 
 Player.prototype.update = function(dt) {
 
 }
 
+// Draw the player on the screen
 Player.prototype.render = function() {
     var pos = setPosition(this.x, this.y);
     ctx.drawImage(Resources.get(this.sprite), pos['x'], pos['y']);
+    
+    // Draw the number of lives available in the upper-right corner
+    var j = 470;
+    for (var i = 0; i < this.livesNumber; i++) {
+        ctx.drawImage(Resources.get('images/Heart-little.png'), j, 45);
+        j -= 30;
+    }
 }
 
 // Handle keyboard input (left, up, right or down)

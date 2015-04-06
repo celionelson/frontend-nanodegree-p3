@@ -102,7 +102,7 @@ var Engine = (function(global) {
     function checkCollisions(dt) {
         allEnemies.forEach(function(enemy) {
             if (Math.abs(player.x - enemy.x) < 0.75 && player.y == enemy.y) {
-                player.init();
+                player.collision();
             }
         });
     }
@@ -183,6 +183,7 @@ var Engine = (function(global) {
         'images/grass-block.png',
         'images/enemy-bug.png',
         'images/enemy-bug-reverse.png',
+        'images/Heart-little.png',
         'images/char-boy.png'
     ]);
     Resources.onReady(init);
