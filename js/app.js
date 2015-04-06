@@ -22,29 +22,12 @@ var setPosition = function(xGrid, yGrid) {
 
 // Enemies our player must avoid
 var Enemy = function() {
-    // The image/sprite for our enemies
-    this.reset();
+    // Initialize enemy
+    this.init();
 }
 
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
-Enemy.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
-    if (this.x > (gridWidth + 1) || this.x < -1) {
-        this.reset();
-    }
-    else if (this.reverseWay) {
-        this.x -= dt * this.speed;   
-    }
-    else {
-        this.x += dt * this.speed;
-    }
-}
-
-// Reset the enemy position and speed
-Enemy.prototype.reset = function() {
+// Initialize enemy position, direction and speed
+Enemy.prototype.init = function() {
     // Randomly determine if enemy will walk reverse way
     // (from right to left)
     this.reverseWay = [true, false][Math.round(Math.random())];
@@ -52,17 +35,41 @@ Enemy.prototype.reset = function() {
     // Determine initial position
     // Row position randomly chose between 3 stone paths
     if (this.reverseWay) {
+        // Set reverse image for reverseWay enemies
         this.sprite = 'images/enemy-bug-reverse.png';
+
+        //Enemy begins course outside of screen on right side
         this.x = gridWidth + 1;
     }
     else {
         this.sprite = 'images/enemy-bug.png';
+
+        // Enemy begins course outside of screen on left side
         this.x = -1;
     }
+
+    // Randomly determine row position of enemy (stone path)
     this.y = getRandomInt(2, 5);
 
     // Randomly determine speed factor between 1 and 3
     this.speed = getRandomInt(1, 4);
+}
+
+// Update the enemy's position, required method for game
+// Parameter: dt, a time delta between ticks
+Enemy.prototype.update = function(dt) {
+    // Re-initialize enemy when gets out of the screen
+    if (this.x > (gridWidth + 1) || this.x < -1) {
+        this.init();
+    }
+    // Direction set reverse way for reverseWay enemies
+    else if (this.reverseWay) {
+        this.x -= dt * this.speed;   
+    }
+
+    else {
+        this.x += dt * this.speed;
+    }
 }
 
 // Draw the enemy on the screen, required method for game
@@ -71,21 +78,23 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), pos['x'], pos['y']);
 }
 
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
+// Player the user will play
 var Player = function() {
+    // Initialize player
+    this.init();
+}
+
+// Initialize player image and position
+Player.prototype.init = function() {
     this.sprite = 'images/char-boy.png';
-    this.reset();
+    
+    // Positioned at the center-bottom of the screen
+    this.x = Math.ceil(gridWidth / 2);
+    this.y = gridHeight;    
 }
 
 Player.prototype.update = function(dt) {
 
-}
-
-Player.prototype.reset = function() {
-    this.x = Math.ceil(gridWidth / 2);
-    this.y = gridHeight;    
 }
 
 Player.prototype.render = function() {
@@ -93,6 +102,7 @@ Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), pos['x'], pos['y']);
 }
 
+// Handle keyboard input (left, up, right or down)
 Player.prototype.handleInput = function(key) {
 
     if (key === 'left' && this.x > 1) {
@@ -111,8 +121,6 @@ Player.prototype.handleInput = function(key) {
         this.y += 1;
     }
 }
-
-// Now instantiate your objects.
 
 // Place all enemy objects in an array called allEnemies
 allEnemies = [new Enemy(), new Enemy(), new Enemy()];
