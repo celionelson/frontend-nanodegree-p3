@@ -23,11 +23,20 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime;
+        lastTime,
+        menu = false,
+        highscore = 0;
 
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
+
+    /* Set the format of the text written on canvas
+     */
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'white';
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 3;
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -45,8 +54,10 @@ var Engine = (function(global) {
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
          */
-        update(dt);
-        render();
+        if (!menu) {
+            update(dt);
+            render();
+        }
 
         /* Set our lastTime variable which is used to determine the time delta
          * for the next time this function is called.
@@ -147,6 +158,9 @@ var Engine = (function(global) {
             }
         }
 
+        /* Draw highscore green gem on top right corner
+         */
+        ctx.drawImage(Resources.get('images/Gem Green-little.png'), 10, 45);
 
         renderEntities();
     }
@@ -166,12 +180,84 @@ var Engine = (function(global) {
         player.render();
     }
 
+    /* This function is called by the reset function and draws the menu window
+     */
+    function renderMenu() {
+        var numRows = 6,
+            numCols = 5,
+            row, col;
+
+        /* Loop through the number of rows and columns we've defined above
+         * and, using the rowImages array, draw the correct image for that
+         * portion of the "grid"
+         */
+        for (row = 0; row < numRows; row++) {
+            for (col = 0; col < numCols; col++) {
+                /* The drawImage function of the canvas' context element
+                 * requires 3 parameters: the image to draw, the x coordinate
+                 * to start drawing and the y coordinate to start drawing.
+                 * We're using our Resources helpers to refer to our images
+                 * so that we get the benefits of caching these images, since
+                 * we're using them over and over.
+                 */
+                ctx.drawImage(Resources.get('images/water-block.png'), col * 101, row * 83);
+            }
+        }
+
+        /* This array holds the relative URL to the images used
+         * for all the characters of the game.
+         */
+        var charImages = [
+                'images/char-boy.png',
+                'images/char-cat-girl.png',
+                'images/char-horn-girl.png',
+                'images/char-princess-girl.png',
+                'images/char-pink-girl.png'
+            ];
+
+        for (col = 0; col < numCols; col++) {
+            /* Draw all the characters for the user to select which one to play with
+             */
+            ctx.drawImage(Resources.get(charImages[col]), col * 101, 380);
+        }
+
+        var titleText = 'Frogger',
+            highscoreText = 'Highscore : ' + highscore,
+            selectCharText = 'Select your character to begin a new game';
+
+        /* Draw text Title
+         */
+        ctx.font = '36pt Impact';    
+        ctx.strokeText(titleText, canvas.width / 2, 130);
+        ctx.fillText(titleText, canvas.width / 2, 130);
+
+        /* Draw green gem
+         */
+        ctx.drawImage(Resources.get('images/Gem Green-little.png'), 232, 200);
+
+        /* Draw text Highscore
+         */
+        ctx.font = '20pt Impact';    
+        ctx.strokeText(highscoreText, canvas.width / 2, 290);
+        ctx.fillText(highscoreText, canvas.width / 2, 290);
+
+        /* Draw text Select Character
+         */
+        ctx.font = '20pt Impact';    
+        ctx.strokeText(selectCharText, canvas.width / 2, 410);
+        ctx.fillText(selectCharText, canvas.width / 2, 410);
+    }
+
     /* This function does nothing but it could have been a good place to
      * handle game reset states - maybe a new game menu or a game over screen
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
+        // Set menu to true will stop main from updating and rendering
+        menu = true;
+
+        // Draw menu window
+        renderMenu();
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -185,7 +271,15 @@ var Engine = (function(global) {
         'images/enemy-bug.png',
         'images/enemy-bug-reverse.png',
         'images/Heart-little.png',
-        'images/char-boy.png'
+        'images/char-boy.png',
+        'images/char-cat-girl.png',
+        'images/char-horn-girl.png',
+        'images/char-princess-girl.png',
+        'images/char-pink-girl.png',
+        'images/Gem Green-little.png',
+        'images/Gem Green.png',
+        'images/Gem Blue.png',
+        'images/Gem Orange.png'
     ]);
     Resources.onReady(init);
 
