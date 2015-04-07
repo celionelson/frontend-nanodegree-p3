@@ -74,12 +74,23 @@ Enemy.prototype.update = function(dt) {
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
+    // Translate position
     var pos = setPosition(this.x, this.y);
+
+    // Draw enemy objects
     ctx.drawImage(Resources.get(this.sprite), pos['x'], pos['y']);
 }
 
 // Player the user will play
 var Player = function() {
+    // Define initial position of player
+    // Positioned at the center-bottom of the screen
+    this.xInitial = Math.ceil(gridWidth / 2);
+    this.yInitial = gridHeight;
+
+    // Define initial number of lives
+    this.livesNumInitial = 4;
+
     // Reset player
     this.reset();
 };
@@ -88,22 +99,22 @@ var Player = function() {
 Player.prototype.reset = function() {
     this.sprite = 'images/char-boy.png';
     
-    // Positioned at the center-bottom of the screen
-    this.x = Math.ceil(gridWidth / 2);
-    this.y = gridHeight; 
+    // Initialize player position
+    this.x = this.xInitial;
+    this.y = this.yInitial; 
 
-    // Initialize number of lives
-    this.livesNumber = 4;
+    // Reset number of lives
+    this.livesNum = this.livesNumInitial;
 }
 
 // Collision handling
 Player.prototype.collision = function() {
-    // Positioned at the center-bottom of the screen
-    this.x = Math.ceil(gridWidth / 2);
-    this.y = gridHeight; 
+    // Initialize player position
+    this.x = this.xInitial;
+    this.y = this.yInitial; 
 
     // Reduce number of lives
-    this.livesNumber -= 1;
+    this.livesNum -= 1;
 }
 
 Player.prototype.update = function(dt) {
@@ -112,12 +123,15 @@ Player.prototype.update = function(dt) {
 
 // Draw the player on the screen
 Player.prototype.render = function() {
+    // Translate position
     var pos = setPosition(this.x, this.y);
+
+    // Draw player object
     ctx.drawImage(Resources.get(this.sprite), pos['x'], pos['y']);
     
     // Draw the number of lives available in the upper-right corner
     var j = 470;
-    for (var i = 0; i < this.livesNumber; i++) {
+    for (var i = 0; i < this.livesNum; i++) {
         ctx.drawImage(Resources.get('images/Heart-little.png'), j, 45);
         j -= 30;
     }
