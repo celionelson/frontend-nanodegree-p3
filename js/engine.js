@@ -101,7 +101,8 @@ var Engine = (function(global) {
     // with an enemy and Re-initialize player if true
     function checkCollisions(dt) {
         allEnemies.forEach(function(enemy) {
-            if (Math.abs(player.x - enemy.x) < 0.75 && player.y == enemy.y) {
+            if (Math.abs(player.x - enemy.x) < 0.75 
+                && Math.abs(player.y - enemy.y) < 0.25) {
                 player.collision();
             }
         });
