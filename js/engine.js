@@ -179,6 +179,15 @@ var Engine = (function(global) {
         ctx.strokeText(player.score, 60, 95);
         ctx.fillText(player.score, 60, 95);
 
+        /* Draw the number of lives available in the upper-right corner
+         * When on game screen 
+         */ 
+        var j = 470;
+        for (var i = 0; i < player.livesNum; i++) {
+            ctx.drawImage(Resources.get('images/Heart-little.png'), j, 45);
+            j -= 30;
+        }
+
         renderEntities();
     }
 

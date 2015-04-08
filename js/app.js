@@ -166,16 +166,6 @@ Player.prototype.render = function() {
 
     // Draw player object
     ctx.drawImage(Resources.get(this.sprite), pos['x'], pos['y']);
-    
-    // Draw the number of lives available in the upper-right corner
-    // When on game screen
-    if (!this.menu) {
-        var j = 470;
-        for (var i = 0; i < this.livesNum; i++) {
-            ctx.drawImage(Resources.get('images/Heart-little.png'), j, 45);
-            j -= 30;
-        }
-    }
 }
 
 // Handle keyboard input (left, up, right or down)
