@@ -31,7 +31,6 @@ var Engine = (function(global) {
 
     /* Set the format of the text written on canvas
      */
-    ctx.textAlign = 'center';
     ctx.fillStyle = 'white';
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 2.5;
@@ -171,7 +170,14 @@ var Engine = (function(global) {
 
         /* Draw highscore green gem on top right corner
          */
-        ctx.drawImage(Resources.get('images/Gem Green-little.png'), 10, 45);
+        ctx.drawImage(Resources.get('images/Gem Green-little.png'), 10, 38);
+
+        /* Draw current score
+         */
+        ctx.font = '20pt Impact';  
+        ctx.textAlign = 'left';  
+        ctx.strokeText(player.score, 60, 95);
+        ctx.fillText(player.score, 60, 95);
 
         renderEntities();
     }
@@ -237,7 +243,8 @@ var Engine = (function(global) {
 
         /* Draw text Title
          */
-        ctx.font = '36pt Impact';    
+        ctx.font = '36pt Impact';   
+        ctx.textAlign = 'center'; 
         ctx.strokeText(titleText, canvas.width / 2, 130);
         ctx.fillText(titleText, canvas.width / 2, 130);
 
