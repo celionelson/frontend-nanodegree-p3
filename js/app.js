@@ -91,20 +91,39 @@ var Player = function() {
     // Define initial number of lives
     this.livesNumInitial = 4;
 
+    // Define array of character images
+    this.charactersImages = [
+        'images/char-boy.png',
+        'images/char-cat-girl.png',
+        'images/char-horn-girl.png',
+        'images/char-princess-girl.png',
+        'images/char-pink-girl.png'
+    ];
+
+    // Initialize character's position in this.charactersImages array
+    this.character = 0;
+
+    // Initialize highscore
+    this.highscore = 0;
+
     // Reset player
     this.reset();
 };
 
 // Reset player image, position and number of lives
-Player.prototype.reset = function() {
-    this.sprite = 'images/char-boy.png';
-    
+Player.prototype.reset = function() {    
     // Initialize player position
     this.x = this.xInitial;
     this.y = this.yInitial; 
 
     // Reset number of lives
     this.livesNum = this.livesNumInitial;
+
+    // Reset score
+    this.score = 0;
+
+    // Initialize menu screen behavior
+    this.menu = true;
 }
 
 // Collision handling
@@ -115,6 +134,11 @@ Player.prototype.collision = function() {
 
     // Reduce number of lives
     this.livesNum -= 1;
+
+    // Reset player if no life left
+    if (this.livesNum === 0) {
+        this.reset();
+    }
 }
 
 Player.prototype.update = function(dt) {
@@ -123,6 +147,9 @@ Player.prototype.update = function(dt) {
 
 // Draw the player on the screen
 Player.prototype.render = function() {
+    // Set character image
+    this.sprite = this.charactersImages[this.character];
+
     // Translate position
     var pos = setPosition(this.x, this.y);
 
@@ -130,17 +157,50 @@ Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), pos['x'], pos['y']);
     
     // Draw the number of lives available in the upper-right corner
-    var j = 470;
-    for (var i = 0; i < this.livesNum; i++) {
-        ctx.drawImage(Resources.get('images/Heart-little.png'), j, 45);
-        j -= 30;
+    // When on game screen
+    if (!this.menu) {
+        var j = 470;
+        for (var i = 0; i < this.livesNum; i++) {
+            ctx.drawImage(Resources.get('images/Heart-little.png'), j, 45);
+            j -= 30;
+        }
     }
 }
 
 // Handle keyboard input (left, up, right or down)
 Player.prototype.handleInput = function(key) {
+    // Menu screen input handling behavior.
+    // Left and right arrows will allow the user to change the player's sprite.
+    // Hit ENTER to launch a new game.
+    if (this.menu) {
+        if (key === 'left') {
+            if (this.character === 0) {
+                this.character = this.charactersImages.length-1;
+            }
 
-    if (key === 'left' && this.x > 1) {
+            else {
+                this.character -= 1;
+            }
+        }
+
+        else if (key === 'right') {
+            if (this.character === this.charactersImages.length-1) {
+                this.character = 0;
+            }
+            
+            else {
+                this.character += 1;
+            }
+        }
+
+        else if (key === 'enter') {
+            player.menu = false;
+        }
+    }
+
+    // Game screen input handling behavior.
+    // Hit arrow keys to move the player on the game screen.
+    else if (key === 'left' && this.x > 1) {
         this.x -= 1;
     }
     
@@ -163,7 +223,6 @@ allEnemies = [new Enemy(), new Enemy(), new Enemy()];
 // Place the player object in a variable called player
 player = new Player();
 
-
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
@@ -171,7 +230,8 @@ document.addEventListener('keyup', function(e) {
         37: 'left',
         38: 'up',
         39: 'right',
-        40: 'down'
+        40: 'down',
+        13: 'enter'
     };
 
     player.handleInput(allowedKeys[e.keyCode]);

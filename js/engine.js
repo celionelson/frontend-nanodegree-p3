@@ -23,9 +23,7 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime,
-        menu = false,
-        highscore = 0;
+        lastTime;
 
     canvas.width = 505;
     canvas.height = 606;
@@ -36,7 +34,7 @@ var Engine = (function(global) {
     ctx.textAlign = 'center';
     ctx.fillStyle = 'white';
     ctx.strokeStyle = 'black';
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 2.5;
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -53,10 +51,15 @@ var Engine = (function(global) {
 
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
+         * Add menu condition to choose which to render between menu or game screen.
          */
-        if (!menu) {
+        if (!player.menu) {
             update(dt);
             render();
+        }
+        else {
+            // Draw menu window
+            renderMenu(); 
         }
 
         /* Set our lastTime variable which is used to determine the time delta
@@ -183,7 +186,18 @@ var Engine = (function(global) {
     /* This function is called by the reset function and draws the menu window
      */
     function renderMenu() {
-        var numRows = 6,
+        /* This array holds the relative URL to the image used
+         * for that particular row of the game level.
+         */
+        var rowImages = [
+                'images/water-block.png',   // Top row is water
+                'images/water-block.png',   // Row 2 is water
+                'images/water-block.png',   // Row 3 is water
+                'images/water-block.png',   // Row 4 is water
+                'images/grass-block.png',   // Row 1 of 2 of grass
+                'images/grass-block.png'    // Row 2 of 2 of grass
+            ],    
+            numRows = 6,
             numCols = 5,
             row, col;
 
@@ -200,30 +214,17 @@ var Engine = (function(global) {
                  * so that we get the benefits of caching these images, since
                  * we're using them over and over.
                  */
-                ctx.drawImage(Resources.get('images/water-block.png'), col * 101, row * 83);
+                ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
             }
         }
 
-        /* This array holds the relative URL to the images used
-         * for all the characters of the game.
-         */
-        var charImages = [
-                'images/char-boy.png',
-                'images/char-cat-girl.png',
-                'images/char-horn-girl.png',
-                'images/char-princess-girl.png',
-                'images/char-pink-girl.png'
-            ];
+        // Draw selector
+        ctx.drawImage(Resources.get('images/Selector.png'), 202, 400);
 
-        for (col = 0; col < numCols; col++) {
-            /* Draw all the characters for the user to select which one to play with
-             */
-            ctx.drawImage(Resources.get(charImages[col]), col * 101, 380);
-        }
-
-        var titleText = 'Frogger',
-            highscoreText = 'Highscore : ' + highscore,
-            selectCharText = 'Select your character to begin a new game';
+        var titleText = 'FROGGER',
+            highscoreText = 'Highscore : ' + player.highscore,
+            newGameText = 'New Game',
+            selectCharText = 'Select your character then press ENTER';
 
         /* Draw text Title
          */
@@ -233,19 +234,27 @@ var Engine = (function(global) {
 
         /* Draw green gem
          */
-        ctx.drawImage(Resources.get('images/Gem Green-little.png'), 232, 200);
+        ctx.drawImage(Resources.get('images/Gem Green-little.png'), 232, 160);
 
         /* Draw text Highscore
          */
         ctx.font = '20pt Impact';    
-        ctx.strokeText(highscoreText, canvas.width / 2, 290);
-        ctx.fillText(highscoreText, canvas.width / 2, 290);
+        ctx.strokeText(highscoreText, canvas.width / 2, 255);
+        ctx.fillText(highscoreText, canvas.width / 2, 255);
+
+        /* Draw text New Game
+         */
+        ctx.font = '20pt Impact';    
+        ctx.strokeText(newGameText, canvas.width / 2, 330);
+        ctx.fillText(newGameText, canvas.width / 2, 330);
 
         /* Draw text Select Character
          */
         ctx.font = '20pt Impact';    
-        ctx.strokeText(selectCharText, canvas.width / 2, 410);
-        ctx.fillText(selectCharText, canvas.width / 2, 410);
+        ctx.strokeText(selectCharText, canvas.width / 2, 360);
+        ctx.fillText(selectCharText, canvas.width / 2, 360);
+
+        player.render(); 
     }
 
     /* This function does nothing but it could have been a good place to
@@ -253,11 +262,10 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // Set menu to true will stop main from updating and rendering
-        menu = true;
-
-        // Draw menu window
-        renderMenu();
+        /* Set player.menu to true will prevent main() from updating and rendering game screen
+         * and the player object will behave as menu component (character selection)
+         */
+        player.menu = true;
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -279,7 +287,8 @@ var Engine = (function(global) {
         'images/Gem Green-little.png',
         'images/Gem Green.png',
         'images/Gem Blue.png',
-        'images/Gem Orange.png'
+        'images/Gem Orange.png',
+        'images/Selector.png'
     ]);
     Resources.onReady(init);
 
