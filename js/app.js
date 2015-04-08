@@ -103,6 +103,9 @@ var Player = function() {
     // Initialize character's position in this.charactersImages array
     this.character = 0;
 
+    // Set character image
+    this.sprite = this.charactersImages[this.character];
+
     // Initialize highscore
     this.highscore = 0;
 
@@ -159,7 +162,14 @@ Player.prototype.update = function(dt) {
 // Draw the player on the screen
 Player.prototype.render = function() {
     // Set character image
-    this.sprite = this.charactersImages[this.character];
+    // If game paused in case of collision with enemy
+    // image set to collision pic
+    if (this.collisionPause) {
+        player.sprite = 'images/collision.png';
+    }
+    else {
+        this.sprite = this.charactersImages[this.character];
+    }
 
     // Translate position
     var pos = setPosition(this.x, this.y);
@@ -168,7 +178,7 @@ Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), pos['x'], pos['y']);
 }
 
-// Handle keyboard input (left, up, right or down)
+// Handle keyboard input (left, up, right, down or enter)
 Player.prototype.handleInput = function(key) {
     // Menu screen input handling behavior.
     // Left and right arrows will allow the user to change the player's sprite.
@@ -176,7 +186,7 @@ Player.prototype.handleInput = function(key) {
     if (this.menu) {
         if (key === 'left') {
             if (this.character === 0) {
-                this.character = this.charactersImages.length-1;
+                this.character = this.charactersImages.length - 1;
             }
 
             else {
@@ -185,7 +195,7 @@ Player.prototype.handleInput = function(key) {
         }
 
         else if (key === 'right') {
-            if (this.character === this.charactersImages.length-1) {
+            if (this.character === this.charactersImages.length - 1) {
                 this.character = 0;
             }
             
@@ -198,7 +208,7 @@ Player.prototype.handleInput = function(key) {
             player.menu = false;
         }
     }
-
+    
     // Game screen input handling behavior.
     // Hit arrow keys to move the player on the game screen.
     else if (key === 'left' && this.x > 1) {
@@ -215,6 +225,14 @@ Player.prototype.handleInput = function(key) {
 
     else if (key === 'down' && this.y < gridHeight) {
         this.y += 1;
+    }
+
+    // If game has been paused, unpause and run player's collision function
+    // Game is paused when a collision with an enemy is detected
+    // in checkCollisions function
+    if (this.collisionPause) {
+        this.collisionPause = false;
+        this.collision();
     }
 }
 

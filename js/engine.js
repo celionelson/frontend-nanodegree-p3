@@ -53,7 +53,10 @@ var Engine = (function(global) {
          * Add menu condition to choose which to render between menu or game screen.
          */
         if (!player.menu) {
-            update(dt);
+            if (!player.collisionPause) {
+                update(dt);
+            }
+
             render();
         }
         else {
@@ -110,18 +113,23 @@ var Engine = (function(global) {
         player.update();
     }
 
-    // Check if the player is at the same position (or very close)
-    // with another object
-    function checkCollisions(dt) {
-        // If player collides with enemy, run player's collision function
+    /* Check if the player is at the same position (or very close)
+     * with another object
+     */
+    function checkCollisions() {
+        /* If player collides with enemy, pause the game
+         * Hitting the keyboard will unpause the game and run
+         * player's collision function
+         */
         allEnemies.forEach(function(enemy) {
             if (Math.abs(player.x - enemy.x) < 0.75 
                 && Math.abs(player.y - enemy.y) < 0.25) {
-                player.collision();
+                player.collisionPause = true;
             }
         });
 
-        // If player collides with gem, run player's collect function
+        /* If player collides with gem, run player's collect function
+         */
         if (Math.abs(player.x - gem.x) < 0.75 
             && Math.abs(player.y - gem.y) < 0.25) {
             player.collect();
@@ -313,7 +321,8 @@ var Engine = (function(global) {
         'images/Gem Green.png',
         'images/Gem Blue.png',
         'images/Gem Orange.png',
-        'images/Selector.png'
+        'images/Selector.png',
+        'images/collision.png'
     ]);
     Resources.onReady(init);
 
