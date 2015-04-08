@@ -112,14 +112,22 @@ var Engine = (function(global) {
     }
 
     // Check if the player is at the same position (or very close)
-    // with an enemy and Re-initialize player if true
+    // with another object
     function checkCollisions(dt) {
+        // If player collides with enemy, run player's collision function
         allEnemies.forEach(function(enemy) {
             if (Math.abs(player.x - enemy.x) < 0.75 
                 && Math.abs(player.y - enemy.y) < 0.25) {
                 player.collision();
             }
         });
+
+        // If player collides with gem, run player's collect function
+        if (Math.abs(player.x - gem.x) < 0.75 
+            && Math.abs(player.y - gem.y) < 0.25) {
+            player.collect();
+            gem.reset();
+        }
     }
 
     /* This function initially draws the "game level", it will then call

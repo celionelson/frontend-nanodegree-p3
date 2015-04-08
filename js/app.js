@@ -141,6 +141,17 @@ Player.prototype.collision = function() {
     }
 }
 
+// Collection of gems handling
+Player.prototype.collect = function() {
+    // Increment player's score
+    this.score += 1;
+
+    // Change highscore if passed by score
+    if (this.score > this.highscore) {
+        this.highscore = this.score;
+    }
+}
+
 Player.prototype.update = function(dt) {
 
 }
