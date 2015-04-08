@@ -181,6 +181,7 @@ var Engine = (function(global) {
         });
 
         player.render();
+        gem.render();
     }
 
     /* This function is called by the reset function and draws the menu window

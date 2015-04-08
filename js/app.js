@@ -217,11 +217,41 @@ Player.prototype.handleInput = function(key) {
     }
 }
 
+// Gems the player will have to fetch
+var Gem = function() {
+    // Reset gem
+    this.reset();
+};
+
+Gem.prototype.reset = function() {
+    // Randomly determine gem color
+    this.sprite = ['images/Gem Green.png', 'images/Gem Blue.png', 
+        'images/Gem Orange.png'][getRandomInt(0, 3)];
+
+    // Randomly determine column position of gem (stone path)
+    this.x = getRandomInt(1, 6);
+
+    // Randomly determine row position of gem (stone path)
+    this.y = getRandomInt(2, 5);
+}
+
+// Draw the gem on the screen
+Gem.prototype.render = function() {
+    // Translate position
+    var pos = setPosition(this.x, this.y);
+
+    // Draw enemy objects
+    ctx.drawImage(Resources.get(this.sprite), pos['x'], pos['y']);
+}
+
 // Place all enemy objects in an array called allEnemies
 allEnemies = [new Enemy(), new Enemy(), new Enemy()];
 
 // Place the player object in a variable called player
 player = new Player();
+
+// Place the gem object in a variable called gem
+gem = new Gem();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
