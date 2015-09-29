@@ -1,3 +1,5 @@
+#[Click here to play the game !](http://celionelson.github.io/frontend-nanodegree-p3/)
+
 #Arcade game
 My third project on Udacity's Front-End Dev Nanodegree.
 
